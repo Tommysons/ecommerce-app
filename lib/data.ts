@@ -945,7 +945,7 @@ const products: IProductInput[] = [
     images: ['/images/p46-1.jpg', '/images/p46-2.jpg'],
     tags: ['best-seller', 'todays-deal'],
     isPublished: true,
-    price: 32.99,
+    price: 31.99,
     listPrice: 80,
     avgRating: 3.46,
     numReviews: 13,

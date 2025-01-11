@@ -75,8 +75,8 @@ const productSchema = new Schema<IProduct>(
     },
     isPublished: {
       type: Boolean,
-      default: true,
       required: true,
+      default: false,
     },
     reviews: [
       {
