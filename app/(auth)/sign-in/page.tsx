@@ -38,12 +38,11 @@ export default async function SignIn(props: {
       </Card>
       <SeparatorWithOr>New to {APP_NAME}?</SeparatorWithOr>
 
-      <Link
-        href={`/sign-up?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-      ></Link>
-      <Button className='w-full' variant='outline'>
-        Create your {APP_NAME} account
-      </Button>
+      <Link href={`/sign-up?callbackUrl=${encodeURIComponent(callbackUrl)}`}>
+        <Button className='w-full' variant='outline'>
+          Create your {APP_NAME} account
+        </Button>
+      </Link>
     </div>
   )
 }
