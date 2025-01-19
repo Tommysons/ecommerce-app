@@ -42,15 +42,18 @@ import {
   AVAILABLE_PAYMENT_METHODS,
   DEFAULT_PAYMENT_METHOD,
 } from '@/lib/constats'
+import { toast } from '@/hooks/use-toast'
+import { createOrder } from '@/lib/actions/order.actions'
 
 const shippingAddressDefaultValues =
   process.env.NODE_ENV === 'development'
     ? {
         fullName: 'Basir',
-        street: '123 Main St',
-        city: 'Vancouver',
-        province: 'British Columbia',
-        phone: '1234567890',
+        street: '1911, 65 Sherbrooke Est',
+        city: 'Montreal',
+        province: 'Quebec',
+        phone: '4181234567',
+        postalCode: 'H2X 1C4',
         country: 'Canada',
       }
     : {
@@ -59,6 +62,7 @@ const shippingAddressDefaultValues =
         city: '',
         province: '',
         phone: '',
+        postalCode: '',
         country: '',
       }
 
@@ -82,6 +86,7 @@ const CheckoutForm = () => {
     updateItem,
     removeItem,
     setDeliveryDateIndex,
+    clearCart,
   } = useCartStore()
 
   const isMounted = useIsMounted()
@@ -113,7 +118,32 @@ const CheckoutForm = () => {
     useState<boolean>(false)
 
   const handlePlaceOrder = async () => {
-    //TODO: place order
+    const res = await createOrder({
+      items,
+      shippingAddress,
+      expectedDeliveryDate: calculateFutureDate(
+        AVAILABLE_DELIVERY_DATES[deliveryDateIndex!].daysToDeliver
+      ),
+      deliveryDateIndex,
+      paymentMethod,
+      itemsPrice,
+      shippingPrice,
+      taxPrice,
+      totalPrice,
+    })
+    if (!res.success) {
+      toast({
+        description: res.message,
+        variant: 'destructive',
+      })
+    } else {
+      toast({
+        description: res.message,
+        variant: 'default',
+      })
+      clearCart()
+      router.push(`/checkout/${res.data?.orderId}`)
+    }
   }
 
   const handleSelectPaymentMethod = () => {
@@ -137,19 +167,20 @@ const CheckoutForm = () => {
               Ship to this address
             </Button>
             <p className='text-xs text-center py-2'>
-              Choose a shipping address and payment method is order to calculate
+              Choose a shipping address and payment method in order to calculate
               shipping, handling, and tax.
             </p>
           </div>
         )}
         {isAddressSelected && !isPaymentMethodSelected && (
-          <div className='mb-4'>
+          <div className=' mb-4'>
             <Button
               className='rounded-full w-full'
               onClick={handleSelectPaymentMethod}
             >
               Use this payment method
             </Button>
+
             <p className='text-xs text-center py-2'>
               Choose a payment method to continue checking out. You&apos;ll
               still have a chance to review and edit your order before it&apos;s
@@ -163,9 +194,9 @@ const CheckoutForm = () => {
               Place Your Order
             </Button>
             <p className='text-xs text-center py-2'>
-              By placing your order, you agree to {APP_NAME}&pos;s{' '}
+              By placing your order, you agree to {APP_NAME}&apos;s{' '}
               <Link href='/page/privacy-policy'>privacy notice</Link> and
-              <Link href='/page/conditions-of-use'>conditions of use</Link>.
+              <Link href='/page/conditions-of-use'> conditions of use</Link>.
             </p>
           </div>
         )}
@@ -192,7 +223,7 @@ const CheckoutForm = () => {
               </span>
             </div>
             <div className='flex justify-between'>
-              <span>Tax:</span>
+              <span> Tax:</span>
               <span>
                 {taxPrice === undefined ? (
                   '--'
@@ -201,8 +232,8 @@ const CheckoutForm = () => {
                 )}
               </span>
             </div>
-            <div className='flex justify-between pt-4 font-bold text-lg'>
-              <span>Order Total:</span>
+            <div className='flex justify-between  pt-4 font-bold text-lg'>
+              <span> Order Total:</span>
               <span>
                 <ProductPrice price={totalPrice} plain />
               </span>
@@ -220,17 +251,15 @@ const CheckoutForm = () => {
           {/* shipping address*/}
           <div>
             {isAddressSelected && shippingAddress ? (
-              <div className='grid grid-cols-1 md:grid-cols-12 my-3 pb-3'>
-                <div className='col-span-5 flex text-lg font-bold'>
-                  <span className='w-8'>1</span>
+              <div className='grid grid-cols-1 md:grid-cols-12    my-3  pb-3'>
+                <div className='col-span-5 flex text-lg font-bold '>
+                  <span className='w-8'>1 </span>
                   <span>Shipping address</span>
                 </div>
-                <div className='col-span-5'>
+                <div className='col-span-5 '>
                   <p>
-                    {shippingAddress.fullName}
-                    <br />
-                    {shippingAddress.street}
-                    <br />
+                    {shippingAddress.fullName} <br />
+                    {shippingAddress.street} <br />
                     {`${shippingAddress.city}, ${shippingAddress.province}, ${shippingAddress.postalCode}, ${shippingAddress.country}`}
                   </p>
                 </div>
@@ -250,7 +279,7 @@ const CheckoutForm = () => {
             ) : (
               <>
                 <div className='flex text-primary text-lg font-bold my-2'>
-                  <span className='w-8'>1</span>
+                  <span className='w-8'>1 </span>
                   <span>Enter shipping address</span>
                 </div>
                 <Form {...shippingAddressForm}>
