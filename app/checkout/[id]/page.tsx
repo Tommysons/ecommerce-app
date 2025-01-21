@@ -1,6 +1,7 @@
-import { auth } from '@/auth'
 import { notFound } from 'next/navigation'
 import React from 'react'
+
+import { auth } from '@/auth'
 import { getOrderById } from '@/lib/actions/order.actions'
 import PaymentForm from './payment-form'
 import Stripe from 'stripe'
@@ -10,12 +11,16 @@ export const metadata = {
 }
 
 const CheckoutPaymentPage = async (props: {
-  params: Promise<{ id: string }>
+  params: Promise<{
+    id: string
+  }>
 }) => {
   const params = await props.params
+
   const { id } = params
+
   const order = await getOrderById(id)
-  if (!order) return notFound()
+  if (!order) notFound()
 
   const session = await auth()
 
@@ -24,12 +29,11 @@ const CheckoutPaymentPage = async (props: {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(order.totalPrice * 100),
-      currency: 'CAD',
+      currency: 'USD',
       metadata: { orderId: order._id },
     })
     client_secret = paymentIntent.client_secret
   }
-
   return (
     <PaymentForm
       order={order}

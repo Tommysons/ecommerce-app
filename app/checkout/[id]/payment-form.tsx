@@ -21,6 +21,9 @@ import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 import StripeForm from './stripe-form'
 
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
+)
 export default function OrderDetailsForm({
   order,
   paypalClientId,
@@ -136,14 +139,18 @@ export default function OrderDetailsForm({
 
             {/*Stripe*/}
             {!isPaid && paymentMethod === 'Stripe' && clientSecret && (
-              <Elements options={{ clientSecret }} stripe={stripePromise}>
+              <Elements
+                options={{
+                  clientSecret,
+                }}
+                stripe={stripePromise}
+              >
                 <StripeForm
                   priceInCents={Math.round(order.totalPrice * 100)}
                   orderId={order._id}
                 />
               </Elements>
             )}
-
             {/*Cash on Delivery*/}
             {!isPaid && paymentMethod !== 'Cash on Delivery' && (
               <Button
@@ -157,10 +164,6 @@ export default function OrderDetailsForm({
         </div>
       </CardContent>
     </Card>
-  )
-
-  const stripePromise = loadStripe(
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
   )
 
   return (

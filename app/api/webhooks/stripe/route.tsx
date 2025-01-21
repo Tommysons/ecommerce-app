@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+
 import { sendPurchaseReceipt } from '@/emails'
 import Order from '@/lib/db/models/order.model'
 
@@ -37,7 +38,7 @@ export async function POST(req: NextRequest) {
       console.log('email error', err)
     }
     return NextResponse.json({
-      message: 'updatedOrderToPaid was successful',
+      message: 'updateOrderToPaid was successful',
     })
   }
   return new NextResponse()

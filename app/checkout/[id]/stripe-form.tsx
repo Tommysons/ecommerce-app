@@ -5,8 +5,10 @@ import {
   useStripe,
 } from '@stripe/react-stripe-js'
 import { FormEvent, useState } from 'react'
+
 import { Button } from '@/components/ui/button'
 import ProductPrice from '@/components/shared/product/product-price'
+//   import useSettingStore from '@/hooks/use-setting-store'
 import { SERVER_URL } from '@/lib/constats'
 
 export default function StripeForm({
@@ -16,6 +18,10 @@ export default function StripeForm({
   priceInCents: number
   orderId: string
 }) {
+  // const {
+  //   setting: { site },
+  // } = useSettingStore()
+
   const stripe = useStripe()
   const elements = useElements()
   const [isLoading, setIsLoading] = useState(false)
@@ -39,7 +45,7 @@ export default function StripeForm({
         if (error.type === 'card_error' || error.type === 'validation_error') {
           setErrorMessage(error.message)
         } else {
-          setErrorMessage('An unkwnown error occurred')
+          setErrorMessage('An unknown error occurred')
         }
       })
       .finally(() => setIsLoading(false))
@@ -47,7 +53,7 @@ export default function StripeForm({
 
   return (
     <form onSubmit={handleSubmit} className='space-y-4'>
-      <div className='text-2xl'>Stripe Checkout</div>
+      <div className='text-xl'>Stripe Checkout</div>
       {errorMessage && <div className='text-destructive'>{errorMessage}</div>}
       <PaymentElement />
       <div>
