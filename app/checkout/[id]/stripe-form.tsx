@@ -7,7 +7,7 @@ import {
 import { FormEvent, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import ProductPrice from '@/components/shared/product/product-price'
-// import { SERVER_URL } from '@/lib/constats'
+import { SERVER_URL } from '@/lib/constats'
 
 export default function StripeForm({
   priceInCents,
@@ -32,7 +32,7 @@ export default function StripeForm({
       .confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${'ecommerce-app-mauve-seven.vercel.app'}/checkout/${orderId}/stripe-payment-success`,
+          return_url: `${SERVER_URL}/checkout/${orderId}/stripe-payment-success`,
         },
       })
       .then(({ error }) => {
