@@ -4,7 +4,7 @@ import { Document, Model, model, models, Schema } from 'mongoose'
 export interface IOrder extends Document, IOrderInput {
   _id: string
   createdAt: Date
-  updateAt: Date
+  updatedAt: Date
 }
 
 const orderSchema = new Schema<IOrder>(
@@ -43,7 +43,7 @@ const orderSchema = new Schema<IOrder>(
       phone: { type: String, required: true },
     },
     expectedDeliveryDate: { type: Date, required: true },
-    paymentMethod: { type: String, status: String, email_address: String },
+    paymentMethod: { type: String, required: true },
     paymentResult: { id: String, status: String, email_address: String },
     itemsPrice: { type: Number, required: true },
     shippingPrice: { type: Number, required: true },
