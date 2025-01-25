@@ -1,6 +1,6 @@
 {
   "functions": {
-    "pages/api/webhooks/stripe/route.jsx": {
+    "pages/api/webhooks/stripe/route.ts": {
       "maxDuration": 60
     }
   }
