@@ -3,6 +3,7 @@ import Stripe from 'stripe'
 
 import { sendPurchaseReceipt } from '@/emails'
 import Order from '@/lib/db/models/order.model'
+import { connectToDatabase } from '@/lib/db'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
 
@@ -13,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     console.log('Webhook payload:', payload)
     console.log('Webhook signature:', signature)
-
+    connectToDatabase(process.env.MONGODB_URI)
     const event = await stripe.webhooks.constructEvent(
       payload,
       signature,
@@ -34,7 +35,9 @@ export async function POST(req: NextRequest) {
       console.log('Email:', email)
       console.log('Price paid:', pricePaidInCents)
 
-      const order = await Order.findById(orderId).populate('user', 'email')
+      const order = await Order.findById(orderId)
+        .populate('user', 'email')
+        .maxTimeMS(30000)
       if (order == null) {
         console.error('Order not found:', orderId)
         return new NextResponse('Order not found', { status: 400 })
