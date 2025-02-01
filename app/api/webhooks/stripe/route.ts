@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     console.log('Webhook payload:', payload)
     console.log('Webhook signature:', signature)
-    await connectToDatabase(process.env.MONGODB_URI)
+    await connectToDatabase()
     const event = await stripe.webhooks.constructEvent(
       payload,
       signature,
